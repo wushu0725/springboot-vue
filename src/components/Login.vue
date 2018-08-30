@@ -20,40 +20,34 @@
 </template>
 
 <script>
-  import axios from 'axios'
 
-
-  const  params = new URLSearchParams();
 
 export default {
   data () {
     return {
+      heards:'',
       user:{
-        username:'32323',
-        password:''
+        username:'ws',
+        password:'123456'
       }
     }
   },
   methods :{
     submitForm:function(){
 
-      params.set('username', this.user.username);
-      params.set('password', this.user.password);
-
-
-      axios.post('http://127.0.0.1:8080/login',params,{'xhrFields' : {withCredentials: true},crossDomain: true})
+      localStorage.setItem('login','0');
+      this.$post('/login',{
+        username: this.user.username,
+        password: this.user.password
+      })
         .then(res => {
-          if(res.status){
-            if(res.status==200){
-              //this.$router.push({ name: 'Home'})
-              var datas = res.data;
-              if(datas.status=='success'){
 
-              }{
-                alert(datas.msg);
-              }
+            if(res.code==200){
+                localStorage.setItem('token',JSON.stringify(res.data));
+                //取：var mydata = JSON.parse(localStorage.mydata)
+                this.$router.push({ name: 'Home'});
+                //this.heards=res.data;
             }
-          }
         }, function (error) {
           console.log(error)
         })
@@ -61,14 +55,21 @@ export default {
     },
 
     getCity(){
-      axios.post('/api/user',{},{'xhrFields' : {withCredentials: true},crossDomain: true})
-        .then(res => {
-          if(res.status){
-            console.log(res)
-          }
-        }, function (error) {
-          console.log(error)
-        })
+//      this.$post('/api/menus')
+//        .then(res => {
+//          if(res.status){
+//            console.log(res)
+//          }
+//        }, function (error) {
+//          console.log(error)
+//        })
+      axios.post(
+        '/api/menus',
+        qs.stringify(data),
+        {headers: {'Content-Type': 'application/x-www-form-urlencoded'}}
+      ).then(result => {
+        // do something
+      })
     }
   }
 }

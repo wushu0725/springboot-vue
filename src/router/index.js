@@ -3,11 +3,12 @@ import Router from 'vue-router'
 import HelloWorld from '@/components/HelloWorld'
 import Login from '@/components/Login'
 import Home from '@/components/Home'
+import SysUser from '@/components/system/SysUser'
 
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   routes: [
     {
       path: '/login',
@@ -17,12 +18,28 @@ export default new Router({
     {
       path: '/home',
       name: 'Home',
-      component: Home
-    },
-    {
-      path: '/',
-      name: 'HelloWorld',
-      component: HelloWorld
+      component: Home,
+      meta: {
+        requireAuth: true, // 添加该字段，表示进入这个路由是需要登录的
+      }
     }
   ]
 })
+
+
+router.beforeEach((to, from, next) => {
+
+  if (to.matched.some(r => r.meta.requireAuth)) {
+    if (localStorage.getItem("token")) {
+      next()
+    } else {
+      next({
+        path: '/login'
+      })
+    }
+  } else {
+    next()
+  }
+})
+
+export default router
